@@ -34,6 +34,21 @@ public class RedditResourceImpl implements RedditResource {
     }
 
     @Override
+    public PagingResponse<RedditResponse> searchReddit(RedditSearchRequest request) {
+        return PagingResponse.of(this.redditService.search(request));
+    }
+
+    @Override
+    public Response<RedditResponse> findRedditByOwner() {
+        return Response.of(this.redditService.findByOwnerId());
+    }
+
+    @Override
+    public Response<RedditResponse> deleteReddit(String id) {
+        return Response.of(this.redditService.delete(id));
+    }
+
+    @Override
     public Response<RedditGroupResponse> createRedditGroup(RedditGroupCreateRequest request) {
         return Response.of(this.redditGroupService.create(request));
     }
@@ -41,6 +56,11 @@ public class RedditResourceImpl implements RedditResource {
     @Override
     public Response<RedditGroupResponse> updateRedditGroup(String id, RedditGroupUpdateRequest request) {
         return Response.of(this.redditGroupService.update(id, request));
+    }
+
+    @Override
+    public Response<RedditGroupResponse> updateRedditGroup(String id) {
+        return Response.of(this.redditGroupService.findById(id));
     }
 
     @Override

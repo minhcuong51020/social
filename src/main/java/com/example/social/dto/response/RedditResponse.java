@@ -26,4 +26,8 @@ public class RedditResponse implements Serializable {
 
     private String ownerId;
 
+    private LocalDate modifiedAt;
+
+    private LocalDate createdAt;
+
 }

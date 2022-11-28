@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "reddit")
@@ -36,10 +37,16 @@ public class RedditEntity implements Serializable {
     @Column(name = "name_display")
     private String nameDisplay;
 
-    @Column(name = "owner_id", nullable = false, unique = true)
+    @Column(name = "owner_id", nullable = false)
     private String ownerId;
 
     @Column(name = "deleted")
     private Boolean deleted;
+
+    @Column(name = "created_at")
+    private LocalDate createdAt;
+
+    @Column(name = "modified_at")
+    private LocalDate modifiedAt;
 
 }

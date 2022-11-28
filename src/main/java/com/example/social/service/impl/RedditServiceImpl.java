@@ -1,14 +1,14 @@
 package com.example.social.service.impl;
 
 import com.example.social.dto.request.RedditCreateRequest;
-import com.example.social.dto.request.RedditGroupSearchRequest;
+import com.example.social.dto.request.RedditSearchRequest;
 import com.example.social.dto.request.RedditUpdateRequest;
 import com.example.social.dto.response.RedditGroupResponse;
 import com.example.social.dto.response.RedditResponse;
 import com.example.social.entity.RedditEntity;
-import com.example.social.entity.RedditGroupEntity;
 import com.example.social.mapper.RedditMapper;
 import com.example.social.repository.RedditRepository;
+import com.example.social.repository.RedditRepositoryCustom;
 import com.example.social.service.RedditService;
 import com.example.social.support.BadRequestError;
 import com.hmc.common.dto.PageDTO;
@@ -19,6 +19,7 @@ import com.hmc.config.SecurityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,9 +31,12 @@ public class RedditServiceImpl implements RedditService {
 
     private final RedditMapper redditMapper;
 
-    public RedditServiceImpl(RedditRepository redditRepository, RedditMapper redditMapper) {
+    private final RedditRepositoryCustom redditRepositoryCustom;
+
+    public RedditServiceImpl(RedditRepository redditRepository, RedditMapper redditMapper, RedditRepositoryCustom redditRepositoryCustom) {
         this.redditRepository = redditRepository;
         this.redditMapper = redditMapper;
+        this.redditRepositoryCustom = redditRepositoryCustom;
     }
 
     @Override
@@ -45,11 +49,12 @@ public class RedditServiceImpl implements RedditService {
         redditEntity.setId(IdUtils.nextId());
         redditEntity.setUsername(request.getUsername());
         redditEntity.setPassword(request.getPassword());
-        redditEntity.setClientId(redditEntity.getClientId());
-        redditEntity.setClientSecret(redditEntity.getClientSecret());
-        redditEntity.setNameDisplay(redditEntity.getNameDisplay());
+        redditEntity.setClientId(request.getClientId());
+        redditEntity.setClientSecret(request.getClientSecret());
+        redditEntity.setNameDisplay(request.getDisplayName());
         redditEntity.setOwnerId(ownerId);
         redditEntity.setDeleted(Boolean.FALSE);
+        redditEntity.setCreatedAt(LocalDate.now());
         this.redditRepository.save(redditEntity);
         return this.redditMapper.toDomain(redditEntity);
     }
@@ -61,6 +66,7 @@ public class RedditServiceImpl implements RedditService {
         redditEntity.setClientSecret(request.getClientSecret());
         redditEntity.setUsername(request.getUsername());
         redditEntity.setPassword(request.getPassword());
+        redditEntity.setModifiedAt(LocalDate.now());
         this.redditRepository.save(redditEntity);
         return this.redditMapper.toDomain(redditEntity);
     }
@@ -85,9 +91,31 @@ public class RedditServiceImpl implements RedditService {
     @Override
     public RedditResponse delete(String id) {
         RedditEntity redditEntity = this.ensureReddit(id);
-        redditEntity.setDeleted(Boolean.FALSE);
+        redditEntity.setDeleted(Boolean.TRUE);
         this.redditRepository.save(redditEntity);
         return this.redditMapper.toDomain(redditEntity);
+    }
+
+    @Override
+    public PageDTO<RedditResponse> search(RedditSearchRequest request) {
+        List<RedditEntity> redditEntities = this.redditRepositoryCustom.search(request);
+        List<RedditResponse> redditResponses = this.redditMapper.toDomain(redditEntities);
+        Long count = this.redditRepositoryCustom.count(request);
+        if(count <= 0) {
+            return new PageDTO<>();
+        }
+        return new PageDTO<>(
+                redditResponses,
+                request.getPageIndex(),
+                request.getPageSize(),
+                count
+        );
+    }
+
+    @Override
+    public RedditResponse findByOwnerId() {
+        String ownerId = ensureUserIdLogin();
+        return this.redditMapper.toDomain(this.redditRepository.findByOwnerId(ownerId));
     }
 
     private RedditEntity ensureReddit(String id) {
