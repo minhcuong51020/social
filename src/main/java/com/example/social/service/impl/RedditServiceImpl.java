@@ -42,9 +42,6 @@ public class RedditServiceImpl implements RedditService {
     @Override
     public RedditResponse create(RedditCreateRequest request) {
         String ownerId = ensureUserIdLogin();
-        if(Objects.nonNull(this.redditRepository.findByOwnerId(ownerId))) {
-            throw new ResponseException(BadRequestError.REDDIT_USER_ONLY_ONE);
-        }
         RedditEntity redditEntity = new RedditEntity();
         redditEntity.setId(IdUtils.nextId());
         redditEntity.setUsername(request.getUsername());
@@ -66,6 +63,7 @@ public class RedditServiceImpl implements RedditService {
         redditEntity.setClientSecret(request.getClientSecret());
         redditEntity.setUsername(request.getUsername());
         redditEntity.setPassword(request.getPassword());
+        redditEntity.setNameDisplay(request.getNameDisplay());
         redditEntity.setModifiedAt(LocalDate.now());
         this.redditRepository.save(redditEntity);
         return this.redditMapper.toDomain(redditEntity);
@@ -92,15 +90,18 @@ public class RedditServiceImpl implements RedditService {
     public RedditResponse delete(String id) {
         RedditEntity redditEntity = this.ensureReddit(id);
         redditEntity.setDeleted(Boolean.TRUE);
+        if(!redditEntity.getOwnerId().equals(ensureUserIdLogin())) {
+            throw new ResponseException(BadRequestError.REDDIT_NOT_FOUND);
+        }
         this.redditRepository.save(redditEntity);
         return this.redditMapper.toDomain(redditEntity);
     }
 
     @Override
     public PageDTO<RedditResponse> search(RedditSearchRequest request) {
-        List<RedditEntity> redditEntities = this.redditRepositoryCustom.search(request);
+        List<RedditEntity> redditEntities = this.redditRepositoryCustom.search(request, ensureUserIdLogin());
         List<RedditResponse> redditResponses = this.redditMapper.toDomain(redditEntities);
-        Long count = this.redditRepositoryCustom.count(request);
+        Long count = this.redditRepositoryCustom.count(request, ensureUserIdLogin());
         if(count <= 0) {
             return new PageDTO<>();
         }

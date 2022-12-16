@@ -8,7 +8,13 @@ public enum BadRequestError implements ResponseError {
 
     REDDIT_GROUP_NOT_FOUND(40006002, "Reddit not found"),
 
-    REDDIT_USER_ONLY_ONE(4006002, "You have only one reddit")
+    REDDIT_USER_ONLY_ONE(4006003, "You have only one reddit"),
+
+    LINE_NOT_FOUND(40006004, "Line not found"),
+
+    LINE_IS_ONLY(40006005, "You only have one account line in system"),
+
+    TUMBLR_NOT_FOUND(40006006, "Tumblr not found"),
     ;
 
     private final Integer code;

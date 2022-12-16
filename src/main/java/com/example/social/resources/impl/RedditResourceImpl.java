@@ -29,6 +29,11 @@ public class RedditResourceImpl implements RedditResource {
     }
 
     @Override
+    public Response<RedditResponse> redditDetail(String id) {
+        return Response.of(this.redditService.findById(id));
+    }
+
+    @Override
     public Response<RedditResponse> updateReddit(String id, RedditUpdateRequest request) {
         return Response.of(this.redditService.update(id, request));
     }
@@ -59,8 +64,13 @@ public class RedditResourceImpl implements RedditResource {
     }
 
     @Override
-    public Response<RedditGroupResponse> updateRedditGroup(String id) {
+    public Response<RedditGroupResponse> detailRedditGroup(String id) {
         return Response.of(this.redditGroupService.findById(id));
+    }
+
+    @Override
+    public Response<RedditGroupResponse> deleteRedditGroup(String id) {
+        return Response.of(this.redditGroupService.delete(id));
     }
 
     @Override
@@ -72,6 +82,5 @@ public class RedditResourceImpl implements RedditResource {
     public PagingResponse<RedditGroupResponse> searchRedditGroupAuto(RedditGroupSearchRequest request) {
         return PagingResponse.of(this.redditGroupService.searchAutoComplete(request));
     }
-
 
 }

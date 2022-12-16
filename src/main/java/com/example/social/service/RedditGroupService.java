@@ -16,7 +16,7 @@ public interface RedditGroupService {
 
     RedditGroupResponse findById(String id);
 
-    List<RedditGroupResponse> findAll();
+    RedditGroupResponse delete(String id);
 
     PageDTO<RedditGroupResponse> search(RedditGroupSearchRequest request);
 

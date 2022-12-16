@@ -73,8 +73,11 @@ public class RedditGroupServiceImpl implements RedditGroupService {
     }
 
     @Override
-    public List<RedditGroupResponse> findAll() {
-        return null;
+    public RedditGroupResponse delete(String id) {
+        RedditGroupEntity redditGroupEntity = ensureRedditGroup(id);
+        redditGroupEntity.setDeleted(Boolean.TRUE);
+        this.redditGroupRepository.save(redditGroupEntity);
+        return this.redditGroupMapper.toDomain(redditGroupEntity);
     }
 
     @Override

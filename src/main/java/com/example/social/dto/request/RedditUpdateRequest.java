@@ -19,4 +19,6 @@ public class RedditUpdateRequest implements Serializable {
 
     private String clientSecret;
 
+    private String nameDisplay;
+
 }
