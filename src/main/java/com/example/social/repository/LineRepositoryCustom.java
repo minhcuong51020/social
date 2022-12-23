@@ -56,8 +56,8 @@ public class LineRepositoryCustom {
         sql.append("WHERE 1 = 1 ");
         sql.append("AND R.deleted = false ");
         if(!StrUtils.isBlank(request.getKeyword())) {
-            sql.append("AND R.channelName like :channelName ");
-            values.put("channelName", SqlUtils.encodeKeyword(request.getKeyword()));
+            sql.append("AND LOWER(R.channelName) like :channelName ");
+            values.put("channelName", SqlUtils.encodeKeyword(request.getKeyword()).toLowerCase());
         }
         sql.append("AND R.ownerId = :ownerId");
         values.put("ownerId", ownerId);

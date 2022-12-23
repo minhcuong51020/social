@@ -55,13 +55,14 @@ public class RedditRepositoryCustom {
         StringBuilder sql = new StringBuilder();
         sql.append("WHERE 1 = 1 ");
         sql.append("AND R.deleted = false ");
-        sql.append("AND R.ownerId = :ownerId");
+        sql.append("AND R.ownerId = :ownerId ");
         values.put("ownerId", ownerId);
         if(!StrUtils.isBlank(request.getKeyword())) {
-            sql.append("AND (R.nameDisplay like :nameDisplay ");
-            values.put("nameDisplay", SqlUtils.encodeKeyword(request.getKeyword()));
-            sql.append("OR R.username like :username) ");
-            values.put("username", SqlUtils.encodeKeyword(request.getKeyword()));
+            sql.append("AND (LOWER(R.nameDisplay) like :nameDisplay ");
+            System.out.println(request.getKeyword());
+            values.put("nameDisplay", SqlUtils.encodeKeyword(request.getKeyword()).toLowerCase());
+            sql.append("OR LOWER(R.username) like :username) ");
+            values.put("username", SqlUtils.encodeKeyword(request.getKeyword()).toLowerCase());
         }
         return sql.toString();
     }

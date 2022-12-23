@@ -56,10 +56,10 @@ public class RedditGroupRepositoryCustom {
         sql.append("WHERE 1 = 1 ");
         sql.append("AND R.deleted = false ");
         if(!StrUtils.isBlank(request.getKeyword())) {
-            sql.append("AND (R.name like :name ");
-            values.put("name", SqlUtils.encodeKeyword(request.getKeyword()));
-            sql.append("OR R.nameUrl like :nameUrl) ");
-            values.put("nameUrl", SqlUtils.encodeKeyword(request.getKeyword()));
+            sql.append("AND (LOWER(R.name) like :name ");
+            values.put("name", SqlUtils.encodeKeyword(request.getKeyword()).toLowerCase());
+            sql.append("OR LOWER(R.nameUrl) like :nameUrl) ");
+            values.put("nameUrl", SqlUtils.encodeKeyword(request.getKeyword()).toLowerCase());
         }
         return sql.toString();
     }

@@ -48,7 +48,7 @@ public class RedditServiceImpl implements RedditService {
         redditEntity.setPassword(request.getPassword());
         redditEntity.setClientId(request.getClientId());
         redditEntity.setClientSecret(request.getClientSecret());
-        redditEntity.setNameDisplay(request.getDisplayName());
+        redditEntity.setNameDisplay(request.getNameDisplay());
         redditEntity.setOwnerId(ownerId);
         redditEntity.setDeleted(Boolean.FALSE);
         redditEntity.setCreatedAt(LocalDate.now());

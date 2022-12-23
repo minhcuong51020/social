@@ -17,7 +17,7 @@ public class RedditCreateRequest implements Serializable {
 
     private String clientId;
 
-    private String displayName;
+    private String nameDisplay;
 
     private String clientSecret;
 
